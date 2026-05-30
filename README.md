@@ -26,7 +26,7 @@ The dashboard provides realtime hardware statistics through a simple Python API 
 * Temperature tracking
 * System uptime information
 * Responsive layout
-* Material-inspired interface
+* Material Design-inspired interface
 * Lightweight deployment
 
 ---
