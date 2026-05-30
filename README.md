@@ -2,74 +2,134 @@
 
 # STB Server Dashboard
 
-Modern web dashboard for monitoring CPU, RAM, storage, temperature, and uptime on low-cost Armbian STB servers.
+### Monitoring realtime untuk STB Armbian yang menolak pensiun.
 
-<img src="./preview.png" alt="Preview" width="100%">
+<img src="./preview.png" alt="Preview Dashboard" width="100%">
+
+<br>
+
+Built with HTML, Vanilla JavaScript, Python, and a healthy amount of curiosity.
 
 </div>
 
 ---
 
-## Overview
+## Sekilas
 
-STB Server Dashboard is a lightweight monitoring interface built for Armbian-powered set-top-box servers.
+STB Server Dashboard adalah dashboard monitoring ringan yang dibuat untuk perangkat STB berbasis Armbian Linux.
 
-The dashboard provides realtime hardware statistics through a simple Python API and a modern single-page web interface.
+Project ini berawal dari kebutuhan sederhana: melihat kondisi server dari browser tanpa harus bolak-balik masuk SSH hanya untuk mengecek CPU, RAM, suhu, atau uptime.
+
+Karena ternyata cukup berguna, akhirnya berkembang menjadi dashboard kecil dengan tampilan yang modern, responsif, dan tetap ringan dijalankan pada perangkat dengan spesifikasi terbatas.
 
 ---
 
-## Features
+## Yang Dipantau
 
-* Realtime CPU monitoring
-* RAM usage statistics
-* Storage monitoring
-* Temperature tracking
-* System uptime information
+```text
+CPU Usage
+CPU Frequency
+CPU Cores
+RAM Usage
+Storage Usage
+Available Storage
+Temperature
+System Uptime
+Node Status
+```
+
+---
+
+## Fitur
+
+* Monitoring realtime
+* Material You inspired interface
+* Ripple effect ala Android
 * Responsive layout
-* Material Design-inspired interface
-* Lightweight deployment
+* Dynamic thermal indicator
+* Auto refresh data
+* Visibility-aware polling
+* Automatic fallback mode
+* Tanpa database
+* Tanpa framework frontend
 
 ---
 
-## Stack
+## Cara Kerja
 
-| Component | Technology          |
-| --------- | ------------------- |
-| Frontend  | HTML + Tailwind CSS |
-| Backend   | Python              |
-| Platform  | Armbian Linux       |
+```text
+┌───────────────┐
+│   Browser     │
+└───────┬───────┘
+        │
+        │ GET /api/status
+        │
+┌───────▼───────┐
+│    app.py     │
+│ HTTP Server   │
+└───────┬───────┘
+        │
+        ├─ /proc/meminfo
+        ├─ /proc/cpuinfo
+        ├─ /proc/uptime
+        └─ thermal_zone0
+```
 
 ---
 
-## Files
+## Struktur Project
 
 ```text
 .
 ├── app.py
-└── index.html
+├── index.html
+└── README.md
 ```
 
 ---
 
-## Run
+## Menjalankan
 
 ```bash
-python app.py
+python3 app.py
 ```
 
-Then open:
+Lalu buka:
 
 ```text
-http://localhost:5000
+http://IP_SERVER:5000
 ```
 
 ---
 
-## Purpose
+## Filosofi Project
 
-Built for monitoring low-cost Armbian STB servers without requiring constant SSH access.
+Banyak tool monitoring yang luar biasa canggih.
 
-A simple dashboard for checking system health directly from a browser.
+Tapi kadang yang dibutuhkan cuma halaman sederhana yang bisa menjawab pertanyaan:
 
-```
-```
+> "Server masih hidup kan?"
+
+Dan itu sudah cukup.
+
+---
+
+## Catatan
+
+Project ini dibuat dan diuji pada perangkat STB yang menjalankan Armbian Linux dengan sumber daya yang terbatas.
+
+Tidak ada database.
+
+Tidak ada framework frontend.
+
+Tidak ada dependency yang aneh-aneh.
+
+Hanya Python, HTML, JavaScript, dan sebuah STB yang dipaksa bekerja lebih keras dari takdir awalnya.
+
+---
+
+<div align="center">
+
+**Made for Armbian. Tested on STB. Powered by curiosity.**
+
+</div>
