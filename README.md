@@ -98,9 +98,7 @@ Node Status
 ```text
 .
 ├── app.py
-├── index.html
-├── preview.png
-└── README.md
+└── index.html
 ```
 
 ---
