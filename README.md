@@ -40,8 +40,6 @@ Tujuannya adalah menyajikan informasi penting dalam satu tampilan yang ringkas, 
 * Informasi uptime sistem
 * Status konektivitas node
 * Responsive layout
-* Material You inspired interface
-* Android-style ripple interaction
 * Automatic refresh
 * Visibility-aware polling
 * Offline fallback mode
