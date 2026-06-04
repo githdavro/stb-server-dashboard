@@ -4,7 +4,7 @@
 
 ### Monitoring realtime untuk STB Armbian yang mendapat kehidupan kedua sebagai server.
 
-<img src="./" alt="Dashboard Preview" width="100%">
+<img src="./preview.png" alt="Dashboard Preview" width="100%">
 
 <br>
 
