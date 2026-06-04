@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id" class="scroll-smooth h-full">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Pantau Armbi · GitServer STB</title>
+    <title>ROG UI · STB Armbian Monitor</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <style>
@@ -13,105 +13,20 @@
             -webkit-tap-highlight-color: transparent;
         }
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: #eef3ec;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: #030303;
+            /* Tekstur grid halus ala ROG di latar belakang */
+            background-image: linear-gradient(rgba(239, 68, 68, 0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(239, 68, 68, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
-
-        .ripple-layer {
-            position: absolute;
-            border-radius: 9999px;
-            background: radial-gradient(circle, rgba(255,255,240,0.6) 0%, rgba(180,210,150,0.35) 60%, rgba(255,255,255,0) 90%);
-            transform: scale(0);
-            opacity: 0.8;
-            pointer-events: none;
-            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1), opacity 0.3s ease;
-            will-change: transform;
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
         }
-
-        .ripple-dark {
-            background: radial-gradient(circle, rgba(255,215,150,0.55) 0%, rgba(255,180,80,0.25) 60%, rgba(255,140,0,0) 90%);
-        }
-
-        .card-ripple {
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .glass-card {
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-        }
-
-        .m3-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .m3-card:active {
-            transform: scale(0.98);
-        }
-
-        .gradient-border {
-            position: relative;
-        }
-        .gradient-border::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            padding: 1px;
-            background: linear-gradient(135deg, rgba(255,255,255,.4), rgba(255,255,255,.02));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 0 rgba(34,197,94,0); }
-            50% { box-shadow: 0 0 14px rgba(34,197,94,0.5); }
-        }
-        .live-badge {
-            animation: pulse-glow 2s infinite;
-        }
-
-        .header-base {
-            transition: all 0.3s ease;
-        }
-        .header-scrolled {
-            background-color: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(18px);
-            border-bottom: 1px solid rgba(255,255,255,0.6);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        }
-        .header-transparent {
-            background-color: transparent;
-            backdrop-filter: none;
-            border-bottom: none;
-        }
-
-        .toast-easter {
-            position: fixed;
-            bottom: 28px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #1e2a1f;
-            backdrop-filter: blur(20px);
-            color: #e2f0da;
-            padding: 10px 22px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            z-index: 999;
-            white-space: nowrap;
-            transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.5, 1.2);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-            border: 1px solid rgba(100,200,100,0.3);
-            pointer-events: none;
-            font-family: monospace;
-        }
-        .toast-easter.show {
-            transform: translateX(-50%) translateY(0);
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
         }
         .no-select {
             user-select: none;
@@ -120,168 +35,208 @@
             font-feature-settings: "tnum";
             font-variant-numeric: tabular-nums;
         }
+
+        /* ROG Cyber-Border Style */
+        .rog-panel {
+            background: linear-gradient(145deg, #0a0a0c, #060607);
+            border: 1px solid #1a1215;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+            position: relative;
+        }
+        .rog-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: 1px solid transparent;
+            pointer-events: none;
+            transition: border-color 0.3s;
+        }
+        .rog-panel:hover::before {
+            border-color: rgba(239, 68, 68, 0.15);
+        }
+
+        /* Sudut aksen khas ROG merah di pojok atas panel */
+        .rog-accent-corner {
+            position: relative;
+        }
+        .rog-accent-corner::after {
+            content: '';
+            position: absolute;
+            top: -1px;
+            right: 15px;
+            width: 30px;
+            height: 2px;
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+        }
     </style>
 </head>
-<body class="bg-[#eef3ec] text-slate-800 antialiased overflow-x-hidden no-select">
+<body class="text-zinc-400 antialiased h-full overflow-x-hidden no-select">
 
-<div class="fixed inset-0 -z-10 overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-br from-[#eaf5e8] via-[#f4faf2] to-[#e2eedf]"></div>
-    <div class="absolute -top-36 right-[-80px] w-[450px] h-[450px] rounded-full bg-emerald-300/20 blur-3xl"></div>
-    <div class="absolute bottom-[-180px] left-[-70px] w-[450px] h-[450px] rounded-full bg-teal-300/20 blur-3xl"></div>
-</div>
-
-<div id="easterToast" class="toast-easter">🍃 rahasia kebun: armbian tetap nafas!</div>
-
-<header id="topbar" class="sticky top-0 z-50 header-base header-transparent w-full px-5 lg:px-8 py-3.5">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-500 to-green-700 text-white flex items-center justify-center shadow-md">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                        <rect x="7" y="5" width="10" height="3" rx="0.6" fill="currentColor"/>
-                        <rect x="7" y="10" width="10" height="3" rx="0.6" fill="currentColor"/>
-                        <rect x="7" y="15" width="10" height="3" rx="0.6" fill="currentColor"/>
-                        <circle cx="18" cy="6.5" r="0.8" fill="currentColor"/>
-                        <circle cx="18" cy="11.5" r="0.8" fill="currentColor"/>
-                        <circle cx="18" cy="16.5" r="0.8" fill="currentColor"/>
-                    </svg>
-                </div>
+<div class="flex flex-col min-h-screen">
+    
+    <header class="bg-[#060608]/90 backdrop-blur border-b-2 border-red-600/30 px-6 lg:px-12 py-4 sticky top-0 z-50 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            
+            <div class="flex items-center gap-4">
+                <div class="w-0 h-0 border-t-[8px] border-t-red-600 border-r-[8px] border-r-transparent"></div>
                 <div>
-                    <h1 class="text-xl md:text-2xl font-black tracking-tight text-green-700">GITServer<span class="text-slate-500">.</span></h1>
-                    <p class="text-[10px] md:text-[11px] font-bold text-slate-600 tracking-wider">STB ARMBAN · MONITOR</p>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-base font-black tracking-widest text-zinc-100 font-mono italic">GITSERVER</h1>
+                        <span class="text-[10px] bg-red-600 text-black px-1 font-extrabold font-mono rounded-[2px] tracking-wide">STB DASHBOARD</span>
+                    </div>
+                    <p class="text-[9px] font-bold text-zinc-500 tracking-widest font-mono mt-0.5">Dasbor Pemantauan STB</p>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <div class="hidden md:flex items-center gap-2 bg-white/60 glass-card border border-white/50 rounded-full px-4 py-1.5 shadow-sm">
-                    <span id="nodeLed" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse live-badge"></span>
-                    <span id="nodeLabel" class="text-xs font-bold text-slate-700">hubungkan...</span>
+
+            <div class="flex items-center gap-6 justify-between sm:justify-end border-t border-zinc-900/50 pt-3 sm:pt-0 sm:border-none">
+                <div class="flex items-center gap-2 font-mono text-[10px] bg-black/40 px-3 py-1 border border-zinc-800/60 rounded">
+                    <span id="nodeLed" class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444]"></span>
+                    <span id="nodeLabel" class="text-zinc-400 font-bold tracking-wider">CONNECTING</span>
                 </div>
-                <div id="liveClock" class="bg-black/80 text-white rounded-full px-4 py-1.5 text-xs font-bold tabular-numbers tracking-wide shadow-md min-w-[105px] text-center">
+                <div id="liveClock" class="text-red-500 font-mono text-xl font-black tabular-numbers tracking-widest shadow-sm [text-shadow:0_0_10px_rgba(239,68,68,0.3)]">
                     00:00:00
                 </div>
             </div>
+
         </div>
-    </div>
-</header>
+    </header>
 
-<section class="px-5 lg:px-8 py-7 lg:py-9">
-    <div class="max-w-7xl mx-auto">
-        <div class="mb-6">
-            <p class="uppercase tracking-[0.2em] text-xs font-black text-green-700">▸ realtime</p>
-            <h2 class="text-2xl md:text-4xl font-black tracking-tight text-slate-800 mt-1">kondisi hardware · STB sakti</h2>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-            <!-- CPU -->
-            <div id="cardCpu" class="m3-card relative overflow-hidden rounded-3xl bg-white/70 glass-card border border-white/80 p-6 gradient-border card-ripple">
-                <div class="relative z-10">
-                    <div class="flex justify-between items-start">
-                        <p class="text-xs font-black tracking-wide text-slate-500">CPU LOAD</p>
-                        <span id="cpuBadge" class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">NORMAL</span>
-                    </div>
-                    <div class="mt-4">
-                        <span class="text-5xl font-black"><span id="cpuVal">0</span><span class="text-xl text-slate-400">%</span></span>
-                    </div>
-                    <div class="mt-5">
-                        <div class="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
-                            <div id="cpuBar" class="h-full rounded-full bg-green-500 transition-all duration-500" style="width:0%"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4 flex justify-between text-xs font-bold">
-                        <span class="text-slate-500">Cores</span>
-                        <span id="cpuCores" class="text-slate-800">0 Cores</span>
-                    </div>
-                    <div class="flex justify-between text-xs font-bold mt-1">
-                        <span class="text-slate-500">Freq</span>
-                        <span id="cpuFreq" class="text-slate-800">0 GHz</span>
-                    </div>
-                </div>
+    <main class="flex-1 p-6 lg:p-12 max-w-7xl w-full mx-auto space-y-6">
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-0.5 bg-red-600/20 p-[1px] rounded overflow-hidden shadow-lg font-mono text-xs">
+            <div class="bg-[#08080a] p-4">
+                <span class="text-zinc-600 block text-[9px] uppercase tracking-wider font-semibold">DEVICE MODEL</span>
+                <span class="text-zinc-200 font-bold italic">HG680P</span>
             </div>
-
-            <!-- RAM -->
-            <div id="cardRam" class="m3-card relative overflow-hidden rounded-3xl bg-white/70 glass-card border border-white/80 p-6 gradient-border card-ripple">
-                <div class="relative z-10">
-                    <p class="text-xs font-black tracking-wide text-slate-500">RAM USAGE</p>
-                    <div class="mt-4">
-                        <span class="text-5xl font-black"><span id="ramVal">0</span><span class="text-xl text-slate-400">%</span></span>
-                    </div>
-                    <div class="mt-5">
-                        <div class="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
-                            <div id="ramBar" class="h-full rounded-full bg-green-500 transition-all duration-500" style="width:0%"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4 text-xs font-bold">
-                        <span id="ramDetail" class="text-slate-700">0 / 0 GB</span>
-                    </div>
-                    <p class="text-[11px] text-slate-500 mt-3 font-medium">kecil-kecil tapi gacor, tetep ngopi + docker 🍃</p>
-                </div>
+            <div class="bg-[#08080a] p-4">
+                <span class="text-zinc-600 block text-[9px] uppercase tracking-wider font-semibold">SYSTEM UPTIME</span>
+                <span id="uptimeVal" class="text-zinc-200 font-bold">--</span>
             </div>
-
-            <!-- STORAGE -->
-            <div id="cardStorage" class="m3-card relative overflow-hidden rounded-3xl bg-white/70 glass-card border border-white/80 p-6 gradient-border card-ripple">
-                <div class="relative z-10">
-                    <p class="text-xs font-black tracking-wide text-slate-500">STORAGE</p>
-                    <div class="mt-4">
-                        <span class="text-5xl font-black"><span id="storageVal">0</span><span class="text-xl text-slate-400">%</span></span>
-                    </div>
-                    <div class="mt-5">
-                        <div class="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
-                            <div id="storageBar" class="h-full rounded-full bg-green-500 transition-all duration-500" style="width:0%"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4 text-xs font-bold">
-                        <span id="storageRemainTxt" class="text-slate-700">sisa 0 GB</span>
-                    </div>
-                    <div class="text-xs font-bold text-slate-500 mt-1">
-                        <span id="storageTotalTxt">total 0 GB</span>
-                    </div>
-                </div>
+            <div class="bg-[#08080a] p-4">
+                <span class="text-zinc-600 block text-[9px] uppercase tracking-wider font-semibold">CORE TEMPERATURE</span>
+                <span id="tempValTop" class="text-red-500 font-extrabold [text-shadow:0_0_6px_rgba(239,68,68,0.2)]">0°C</span>
             </div>
-
-            <!-- TEMP + UPTIME -->
-            <div id="tempCard" class="m3-card relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-800 to-emerald-950 text-white p-6 transition-all duration-500 card-ripple">
-                <div id="tempGlow" class="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-emerald-400/20 blur-2xl transition-all duration-500"></div>
-                <div class="relative z-10">
-                    <p class="text-xs font-black tracking-wide text-white/50">SENSOR</p>
-                    <div class="mt-4 flex items-end gap-2">
-                        <span class="text-4xl font-black"><span id="tempVal">0°C</span></span>
-                        <span id="tempLabel" class="text-sm font-bold text-white/70">NORMAL</span>
-                    </div>
-                    <div class="mt-6">
-                        <p class="text-white/60 text-sm font-semibold">Uptime</p>
-                        <p id="uptimeVal" class="font-mono text-sm font-bold tracking-wide mt-1">--</p>
-                    </div>
-                </div>
+            <div class="bg-[#08080a] p-4">
+                <span class="text-zinc-600 block text-[9px] uppercase tracking-wider font-semibold">LOCAL IP ADDRESS</span>
+                <span class="text-zinc-400 font-bold">R E D A C T E D</span>
             </div>
         </div>
-    </div>
-</section>
 
-<footer class="px-5 lg:px-8 pb-7 pt-3">
-    <div class="max-w-7xl mx-auto relative overflow-hidden rounded-3xl bg-white/60 glass-card border border-white/80 shadow-sm card-ripple">
-        <div class="absolute top-0 right-0 w-40 h-40 bg-emerald-300/15 blur-2xl rounded-full"></div>
-        <div class="relative z-10 px-6 md:px-7 py-5">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-green-700 text-white flex items-center justify-center shadow">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                            <rect x="7" y="5" width="10" height="3" rx="0.6" fill="currentColor"/>
-                            <rect x="7" y="10" width="10" height="3" rx="0.6" fill="currentColor"/>
-                            <rect x="7" y="15" width="10" height="3" rx="0.6" fill="currentColor"/>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div class="rog-panel rog-accent-corner rounded-sm p-6 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-6 border-b border-zinc-900 pb-2">
+                    <h2 class="text-[10px] font-bold tracking-widest text-zinc-400 font-mono uppercase flex items-center gap-2">
+                        <span class="w-1 h-3 bg-red-600 inline-block"></span> SYSTEM OVERVIEW / CPU
+                    </h2>
+                    <span id="cpuBadge" class="text-[9px] font-mono font-black px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-800/40 rounded-sm">NORMAL</span>
+                </div>
+                
+                <div class="flex items-center justify-between gap-6 my-2">
+                    <div class="relative w-24 h-24 flex-shrink-0">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle class="text-zinc-900" stroke-width="6" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50"/>
+                            <circle id="cpuRing" class="text-red-600 progress-ring__circle" stroke-width="6" stroke-dasharray="251.3" stroke-dashoffset="251.3" stroke-linecap="square" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" style="filter: drop-shadow(0px 0px 4px #ef4444);"/>
                         </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span class="text-[10px] text-zinc-600 font-mono font-bold uppercase -mb-1">LOAD</span>
+                            <span class="text-xl font-black text-zinc-100 font-mono tabular-numbers"><span id="cpuVal">0</span>%</span>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="font-black text-base tracking-tight text-slate-800">GITDAVRO</h3>
-                        <p class="text-xs text-slate-500">stb indihome dipaksa kerja jadi server armbian 🗿</p>
+                    <div class="space-y-2 font-mono text-xs flex-1">
+                        <div class="flex justify-between border-b border-zinc-900/60 pb-1.5">
+                            <span class="text-zinc-600">ARCHITECTURE</span><span class="text-zinc-400 font-medium">aarch64</span>
+                        </div>
+                        <div class="flex justify-between border-b border-zinc-900/60 pb-1.5">
+                            <span class="text-zinc-600">CORES COUNT</span><span id="cpuCores" class="text-zinc-400 font-medium">0 Cores</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-zinc-600">CLOCK FREQ</span><span id="cpuFreq" class="text-red-500/80 font-bold">0 GHz</span>
+                        </div>
                     </div>
                 </div>
-                <div class="text-xs text-slate-400 font-medium">© 2026 · GitDaVro</div>
+            </div>
+
+            <div class="rog-panel rog-accent-corner rounded-sm p-6 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-6 border-b border-zinc-900 pb-2">
+                    <h2 class="text-[10px] font-bold tracking-widest text-zinc-400 font-mono uppercase flex items-center gap-2">
+                        <span class="w-1 h-3 bg-red-600 inline-block"></span> MEMORY ALLOCATION / RAM
+                    </h2>
+                    <span class="text-[9px] font-mono text-zinc-600 border border-zinc-800 px-1 py-0.5 rounded-sm">DYNAMIC</span>
+                </div>
+                
+                <div class="flex items-center justify-between gap-6 my-2">
+                    <div class="relative w-24 h-24 flex-shrink-0">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle class="text-zinc-900" stroke-width="6" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50"/>
+                            <circle id="ramRing" class="text-red-600 progress-ring__circle" stroke-width="6" stroke-dasharray="251.3" stroke-dashoffset="251.3" stroke-linecap="square" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50" style="filter: drop-shadow(0px 0px 4px #ef4444);"/>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span class="text-[10px] text-zinc-600 font-mono font-bold uppercase -mb-1">USED</span>
+                            <span class="text-xl font-black text-zinc-100 font-mono tabular-numbers"><span id="ramVal">0</span>%</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2 font-mono text-xs flex-1">
+                        <div class="flex justify-between border-b border-zinc-900/60 pb-1.5">
+                            <span class="text-zinc-600">USED MEM</span><span id="ramUsed" class="text-zinc-400 font-medium">0 GB</span>
+                        </div>
+                        <div class="flex justify-between border-b border-zinc-900/60 pb-1.5">
+                            <span class="text-zinc-600">FREE MEM</span><span id="ramFree" class="text-zinc-400 font-medium">0 GB</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-zinc-600">TOTAL SIZE</span><span id="ramTotal" class="text-zinc-500 font-bold">0 GB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="rog-panel rounded-sm p-6">
+            <h2 class="text-[10px] font-bold tracking-widest text-zinc-400 font-mono uppercase mb-4 flex items-center gap-2">
+                <span class="w-1 h-3 bg-red-600 inline-block"></span> STORAGE ENGINE STATUS
+            </h2>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 font-mono text-xs">
+                <div class="w-full sm:w-1/4 bg-black/30 p-3 border border-zinc-900 rounded-sm">
+                    <span class="text-2xl font-black text-red-500 [text-shadow:0_0_8px_rgba(239,68,68,0.2)]"><span id="storageVal">0</span>%</span>
+                    <span class="text-zinc-600 block text-[9px] mt-0.5 uppercase font-bold tracking-wider">CAPACITY IN-USE</span>
+                </div>
+                <div class="w-full sm:flex-1 space-y-2.5">
+                    <div class="w-full h-2 bg-zinc-950 border border-zinc-900 p-[1px] rounded-none overflow-hidden">
+                        <div id="storageBar" class="h-full bg-gradient-to-r via-red-500 from-red-700 to-orange-500 shadow-[0_0_10px_#ef4444] transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between text-zinc-500 text-[10px] font-bold">
+                        <span>SISA: <strong id="storageRemainTxt" class="text-zinc-300">0 GB</strong></span>
+                        <span id="storageTotalTxt" class="tracking-wider">TOTAL: 0 GB</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+
+    </main>
+
+    <footer class="mt-auto bg-[#050506] border-t border-zinc-900 py-5 text-center text-[9px] text-zinc-600 font-mono uppercase tracking-[0.3em]">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 max-w-7xl mx-auto px-6">
+            
+            <div>
+                © 2026 · <span class="text-red-600/60 font-bold tracking-[0.2em]">STB ARMBIAN LINUX</span>
+            </div>
+
+            <div class="hidden sm:block h-3 w-[1px] bg-zinc-800"></div>
+
+            <div class="tracking-normal">
+                <a href="https://github.com/githdavro" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-zinc-500 hover:text-red-500 transition-colors duration-300 group">
+                    <svg class="w-3.5 h-3.5 fill-current transition-transform duration-300 group-hover:scale-110" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                    </svg>
+                    <span class="font-mono text-[10px] font-bold tracking-[0.1em] text-zinc-500 group-hover:text-zinc-200 transition-colors duration-300">githdavro</span>
+                </a>
+            </div>
+
+        </div>
+    </footer>
+</div>
 
 <script>
     const API_URL = "/api/status";
@@ -289,76 +244,45 @@
 
     const dom = {
         cpuVal: document.getElementById('cpuVal'),
-        cpuBar: document.getElementById('cpuBar'),
+        cpuRing: document.getElementById('cpuRing'),
         cpuBadge: document.getElementById('cpuBadge'),
         cpuCores: document.getElementById('cpuCores'),
         cpuFreq: document.getElementById('cpuFreq'),
         ramVal: document.getElementById('ramVal'),
-        ramBar: document.getElementById('ramBar'),
-        ramDetail: document.getElementById('ramDetail'),
+        ramRing: document.getElementById('ramRing'),
+        ramUsed: document.getElementById('ramUsed'),
+        ramFree: document.getElementById('ramFree'),
+        ramTotal: document.getElementById('ramTotal'),
         storageVal: document.getElementById('storageVal'),
         storageBar: document.getElementById('storageBar'),
         storageRemainTxt: document.getElementById('storageRemainTxt'),
         storageTotalTxt: document.getElementById('storageTotalTxt'),
-        tempVal: document.getElementById('tempVal'),
-        tempLabel: document.getElementById('tempLabel'),
+        tempValTop: document.getElementById('tempValTop'),
         uptimeVal: document.getElementById('uptimeVal'),
         liveClock: document.getElementById('liveClock'),
         nodeLed: document.getElementById('nodeLed'),
-        nodeLabel: document.getElementById('nodeLabel'),
-        tempCard: document.getElementById('tempCard'),
-        tempGlow: document.getElementById('tempGlow'),
-        topbar: document.getElementById('topbar')
+        nodeLabel: document.getElementById('nodeLabel')
     };
 
     let refreshInterval = null;
     let errorStreak = 0;
 
     function setText(el, val) { if (el && el.innerText !== val) el.innerText = val; }
-    function setWidth(el, percent) { if (el && el.style.width !== percent + '%') el.style.width = percent + '%'; }
-
-    function colorizeBar(el, value) {
-        let cls = 'h-full rounded-full transition-all duration-500 ';
-        if (value <= 45) cls += 'bg-green-500';
-        else if (value <= 75) cls += 'bg-yellow-500';
-        else cls += 'bg-red-500';
-        el.className = cls;
-    }
-
-    function cpuStatusStyle(load) {
-        if (load > 75) return { text: 'HEAVY', class: 'px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-bold' };
-        if (load > 45) return { text: 'MEDIUM', class: 'px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-bold' };
-        return { text: 'NORMAL', class: 'px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold' };
-    }
-
-    function updateTempVisual(temp) {
-        if (temp <= 45) {
-            dom.tempCard.className = 'm3-card relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-700 to-emerald-950 text-white p-6 transition-all duration-500 card-ripple';
-            dom.tempGlow.className = 'absolute -top-10 -right-10 w-36 h-36 rounded-full bg-emerald-400/20 blur-2xl transition-all duration-500';
-            setText(dom.tempLabel, 'COOL');
-        } else if (temp <= 63) {
-            dom.tempCard.className = 'm3-card relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-700 to-emerald-800 text-white p-6 transition-all duration-500 card-ripple';
-            dom.tempGlow.className = 'absolute -top-10 -right-10 w-36 h-36 rounded-full bg-green-300/25 blur-2xl transition-all duration-500';
-            setText(dom.tempLabel, 'NORMAL');
-        } else if (temp <= 78) {
-            dom.tempCard.className = 'm3-card relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-600 to-orange-950 text-white p-6 transition-all duration-500 card-ripple';
-            dom.tempGlow.className = 'absolute -top-10 -right-10 w-36 h-36 rounded-full bg-orange-300/30 blur-2xl transition-all duration-500';
-            setText(dom.tempLabel, 'WARM');
-        } else {
-            dom.tempCard.className = 'm3-card relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-800 via-red-950 to-black text-white p-6 transition-all duration-500 card-ripple';
-            dom.tempGlow.className = 'absolute -top-10 -right-10 w-36 h-36 rounded-full bg-red-500/30 blur-2xl transition-all duration-500';
-            setText(dom.tempLabel, 'HOT!');
-        }
+    
+    function setRingPercent(circleEl, percent) {
+        if (!circleEl) return;
+        const radius = circleEl.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        circleEl.style.strokeDashoffset = circumference - (percent / 100) * circumference;
     }
 
     function setOnlineStatus(online) {
         if (online) {
-            setText(dom.nodeLabel, 'Armbian: online');
-            if (dom.nodeLed) dom.nodeLed.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse live-badge';
+            setText(dom.nodeLabel, 'STB STATUS ONLINE');
+            if (dom.nodeLed) dom.nodeLed.className = 'w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_#ef4444]';
         } else {
-            setText(dom.nodeLabel, 'Armbian: offline');
-            if (dom.nodeLed) dom.nodeLed.className = 'w-2 h-2 rounded-full bg-slate-400';
-            setText(dom.liveClock, '⚠️ OFFLINE');
+            setText(dom.nodeLabel, 'STB OFFLINE');
+            if (dom.nodeLed) dom.nodeLed.className = 'w-2 h-2 rounded-full bg-zinc-700 shadow-none';
         }
     }
 
@@ -366,8 +290,7 @@
         setInterval(() => {
             if (!dom.liveClock) return;
             const d = new Date();
-            const timeStr = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}`;
-            if (dom.liveClock.innerText !== timeStr) dom.liveClock.innerText = timeStr;
+            dom.liveClock.innerText = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}`;
         }, 1000);
     }
 
@@ -377,153 +300,70 @@
             const timer = setTimeout(() => ctrl.abort(), 3500);
             const res = await fetch(API_URL, { signal: ctrl.signal, cache: 'no-store' });
             clearTimeout(timer);
-            if (!res.ok) throw new Error('api gagal');
+            if (!res.ok) throw new Error();
             const data = await res.json();
             errorStreak = 0;
             setOnlineStatus(true);
 
-            // CPU
+            // CPU Data Mapping
             let cpu = Number(data.cpu_usage) || 0;
-            setText(dom.cpuVal, cpu.toFixed(1));
-            setWidth(dom.cpuBar, cpu);
-            colorizeBar(dom.cpuBar, cpu);
-            const cpuStat = cpuStatusStyle(cpu);
-            setText(dom.cpuBadge, cpuStat.text);
-            dom.cpuBadge.className = cpuStat.class;
+            setText(dom.cpuVal, cpu.toFixed(0));
+            setRingPercent(dom.cpuRing, cpu);
             setText(dom.cpuCores, (data.cpu_cores || 4) + ' Cores');
-            setText(dom.cpuFreq, (data.cpu_freq_ghz || 1.4).toFixed(2) + ' GHz');
+            setText(dom.cpuFreq, (data.cpu_freq_ghz || 1.20).toFixed(2) + ' GHz');
+            
+            if(cpu > 80) {
+                setText(dom.cpuBadge, 'HEAVY OVERLOAD');
+                dom.cpuBadge.className = "text-[9px] font-mono font-black px-1.5 py-0.5 bg-red-950 text-red-400 border border-red-800/40 rounded-sm";
+            } else {
+                setText(dom.cpuBadge, 'NORMAL');
+                dom.cpuBadge.className = "text-[9px] font-mono font-black px-1.5 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-800/40 rounded-sm";
+            }
 
-            // RAM
+            // RAM Data Mapping
             let ramPerc = Number(data.ram_percentage) || 0;
-            setText(dom.ramVal, ramPerc.toFixed(1));
-            setWidth(dom.ramBar, ramPerc);
-            colorizeBar(dom.ramBar, ramPerc);
-            let ramUsed = (data.ram_used || 0).toFixed(1);
-            let ramTotal = (data.ram_total || 2).toFixed(1);
-            setText(dom.ramDetail, `${ramUsed} / ${ramTotal} GB`);
+            setText(dom.ramVal, ramPerc.toFixed(0));
+            setRingPercent(dom.ramRing, ramPerc);
+            setText(dom.ramUsed, (data.ram_used || 0).toFixed(2) + ' GB');
+            setText(dom.ramFree, ((data.ram_total || 0) - (data.ram_used || 0)).toFixed(2) + ' GB');
+            setText(dom.ramTotal, (data.ram_total || 0).toFixed(2) + ' GB');
 
-            // STORAGE
+            // STORAGE Data Mapping
             let storagePerc = Number(data.storage_percentage) || 0;
-            setText(dom.storageVal, storagePerc.toFixed(1));
-            setWidth(dom.storageBar, storagePerc);
-            colorizeBar(dom.storageBar, storagePerc);
-            let avail = (data.storage_available || 12).toFixed(1);
-            let totalStore = (data.storage_total || 28).toFixed(1);
-            setText(dom.storageRemainTxt, `sisa ${avail} GB`);
-            setText(dom.storageTotalTxt, `total ${totalStore} GB`);
+            setText(dom.storageVal, storagePerc.toFixed(0));
+            if (dom.storageBar) dom.storageBar.style.width = storagePerc + '%';
+            setText(dom.storageRemainTxt, (data.storage_available || 0).toFixed(1) + ' GB');
+            setText(dom.storageTotalTxt, 'TOTAL: ' + (data.storage_total || 0).toFixed(1) + ' GB');
 
-            // TEMP + UPTIME
-            let tempC = Number(data.temperature) || 42;
-            setText(dom.tempVal, tempC.toFixed(1) + '°C');
-            updateTempVisual(tempC);
-            setText(dom.uptimeVal, data.uptime || "2 hari, 4 jam");
+            // EXTRA INFO
+            let tempC = Number(data.temperature) || 0;
+            setText(dom.tempValTop, tempC.toFixed(0) + '°C');
+            setText(dom.uptimeVal, data.uptime || "--");
         } catch (err) {
-            console.warn("fetch error", err);
             errorStreak++;
             if (errorStreak >= 2) {
-                const mock = {
-                    cpu_usage: 27.3, cpu_cores: 4, cpu_freq_ghz: 1.52,
-                    ram_percentage: 41.2, ram_used: 1.05, ram_total: 2.56,
-                    storage_percentage: 48.7, storage_available: 14.2, storage_total: 29.8,
-                    temperature: 49.2, uptime: "3 hari 12 jam"
-                };
-                setText(dom.cpuVal, mock.cpu_usage.toFixed(1));
-                setWidth(dom.cpuBar, mock.cpu_usage);
-                colorizeBar(dom.cpuBar, mock.cpu_usage);
-                const fakeStat = cpuStatusStyle(mock.cpu_usage);
-                setText(dom.cpuBadge, fakeStat.text);
-                dom.cpuBadge.className = fakeStat.class;
-                setText(dom.cpuCores, mock.cpu_cores + ' Cores');
-                setText(dom.cpuFreq, mock.cpu_freq_ghz.toFixed(2) + ' GHz');
-                setText(dom.ramVal, mock.ram_percentage.toFixed(1));
-                setWidth(dom.ramBar, mock.ram_percentage);
-                colorizeBar(dom.ramBar, mock.ram_percentage);
-                setText(dom.ramDetail, `${mock.ram_used.toFixed(1)} / ${mock.ram_total.toFixed(1)} GB`);
-                setText(dom.storageVal, mock.storage_percentage.toFixed(1));
-                setWidth(dom.storageBar, mock.storage_percentage);
-                colorizeBar(dom.storageBar, mock.storage_percentage);
-                setText(dom.storageRemainTxt, `sisa ${mock.storage_available.toFixed(1)} GB`);
-                setText(dom.storageTotalTxt, `total ${mock.storage_total.toFixed(1)} GB`);
-                setText(dom.tempVal, mock.temperature.toFixed(1) + '°C');
-                updateTempVisual(mock.temperature);
-                setText(dom.uptimeVal, mock.uptime);
+                // Mockup data static berwujud tema ROG saat API offline agar tidak blank
+                setRingPercent(dom.cpuRing, 28);
+                setText(dom.cpuVal, '28');
+                setText(dom.cpuCores, '4 Cores');
+                setText(dom.cpuFreq, '1.20 GHz');
+                
+                setRingPercent(dom.ramRing, 42);
+                setText(dom.ramVal, '42');
+                setText(dom.ramUsed, '1.66 GB');
+                setText(dom.ramFree, '2.28 GB');
+                setText(dom.ramTotal, '3.94 GB');
+
+                setText(dom.storageVal, '57');
+                if (dom.storageBar) dom.storageBar.style.width = '57%';
+                setText(dom.storageRemainTxt, '14.1 GB');
+                setText(dom.storageTotalTxt, 'TOTAL: 32.8 GB');
+
+                setText(dom.tempValTop, '52°C');
+                setText(dom.uptimeVal, '2h 34m 12s');
                 setOnlineStatus(true);
-            } else {
-                setOnlineStatus(false);
             }
         }
-    }
-
-    // ripple presisi + easter egg
-    function createRippleHandler(el) {
-        if (!el) return;
-        const onRipple = (e) => {
-            const rect = el.getBoundingClientRect();
-            let clientX, clientY;
-            if (e.touches) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            const x = clientX - rect.left;
-            const y = clientY - rect.top;
-            const rippleSpan = document.createElement('span');
-            rippleSpan.className = 'ripple-layer';
-            const maxSize = Math.max(rect.width, rect.height) * 1.3;
-            rippleSpan.style.width = `${maxSize}px`;
-            rippleSpan.style.height = `${maxSize}px`;
-            rippleSpan.style.left = `${x - maxSize/2}px`;
-            rippleSpan.style.top = `${y - maxSize/2}px`;
-            if (el.id === 'tempCard') rippleSpan.classList.add('ripple-dark');
-            el.appendChild(rippleSpan);
-            rippleSpan.offsetHeight;
-            rippleSpan.style.transform = 'scale(1)';
-            rippleSpan.style.opacity = '0';
-            setTimeout(() => { if(rippleSpan.parentNode) rippleSpan.remove(); }, 420);
-        };
-        el.addEventListener('click', onRipple);
-        el.addEventListener('touchstart', onRipple, { passive: false });
-    }
-
-    function showEaster(cardId) {
-        const toast = document.getElementById('easterToast');
-        if (!toast) return;
-        let msg = '';
-        if (cardId === 'cardRam') msg = ' RAM cilik, tapi iso nggo docker, tetep semangat!';
-        else msg = 'armbian never die, tetep ngegas coy!';
-        toast.innerText = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 5000);
-    }
-
-    function attachCards() {
-        const cpuC = document.getElementById('cardCpu');
-        const ramC = document.getElementById('cardRam');
-        const storageC = document.getElementById('cardStorage');
-        const tempC = document.getElementById('tempCard');
-        const footC = document.getElementById('footerCard');
-        if(cpuC) { createRippleHandler(cpuC); cpuC.addEventListener('click', () => showEaster('cardCpu')); }
-        if(ramC) { createRippleHandler(ramC); ramC.addEventListener('click', () => showEaster('cardRam')); }
-        if(storageC) { createRippleHandler(storageC); storageC.addEventListener('click', () => showEaster('cardStorage')); }
-        if(tempC) { createRippleHandler(tempC); tempC.addEventListener('click', () => showEaster('tempCard')); }
-        if(footC) { createRippleHandler(footC); footC.addEventListener('click', () => showEaster('footer')); }
-    }
-
-    function headerScroll() {
-        if (!dom.topbar) return;
-        const cb = () => {
-            if (window.scrollY > 18) {
-                dom.topbar.classList.remove('header-transparent');
-                dom.topbar.classList.add('header-scrolled');
-            } else {
-                dom.topbar.classList.remove('header-scrolled');
-                dom.topbar.classList.add('header-transparent');
-            }
-        };
-        window.addEventListener('scroll', cb, { passive: true });
-        cb();
     }
 
     function startFetchLoop() {
@@ -532,25 +372,11 @@
         refreshInterval = setInterval(fetchStatus, REFRESH_MS);
     }
 
-    function visibilityHandler() {
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                if (refreshInterval) clearInterval(refreshInterval);
-                refreshInterval = null;
-            } else {
-                startFetchLoop();
-            }
-        });
-    }
-
     function init() {
         clockLoop();
-        headerScroll();
-        attachCards();
         startFetchLoop();
-        visibilityHandler();
     }
     init();
 </script>
 </body>
-</html>z
+</html>
